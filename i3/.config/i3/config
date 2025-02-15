@@ -11,7 +11,7 @@
 
 set $mod Mod4
 
-exec_always --no-startup-id setxkbmap --option caps:escape
+exec_always --no-startup-id setxkbmap -option caps:escape
 exec_always --no-startup-id ~/.config/polybar/launch.sh
 
 exec --no-startup-id picom
@@ -117,6 +117,9 @@ bindsym $mod+a focus parent
 # use rofi
 bindsym $mod+d exec rofi -show combi
 
+# printscreen
+bindsym Print exec gnome-screenshot -i
+
 # focus the child container
 #bindsym $mod+d focus child
 
@@ -133,6 +136,44 @@ set $ws8 "8"
 set $ws9 "9"
 set $ws10 "10"
 
+set $rosewater #f5e0dc
+set $flamingo  #f2cdcd
+set $pink      #f5c2e7
+set $mauve     #cba6f7
+set $red       #f38ba8
+set $maroon    #eba0ac
+set $peach     #fab387
+set $yellow    #f9e2af
+set $green     #a6e3a1
+set $teal      #94e2d5
+set $sky       #89dceb
+set $sapphire  #74c7ec
+set $blue      #89b4fa
+set $lavender  #b4befe
+set $text      #cdd6f4
+set $subtext1  #bac2de
+set $subtext0  #a6adc8
+set $overlay2  #9399b2
+set $overlay1  #7f849c
+set $overlay0  #6c7086
+set $surface2  #585b70
+set $surface1  #45475a
+set $surface0  #313244
+set $base      #1e1e2e
+set $mantle    #181825
+set $crust     #11111b
+set $transparent #00000000
+
+# <colorclass>          <border>        <background>    <text>          <indicator>     <child_border>
+client.focused          $transparent    $transparent    $text           $transparent    $transparent
+client.focused_inactive $transparent    $transparent    $text           $transparent    $transparent
+client.unfocused        $transparent    $transparent    $text           $transparent    $transparent
+client.urgent           $transparent    $transparent    $peach          $transparent    $transparent
+client.placeholder      $transparent    $transparent    $text           $transparent    $transparent
+client.background       $base
+
+default_border pixel 3
+
 # switch to workspace
 bindsym $mod+1 workspace number $ws1
 bindsym $mod+2 workspace number $ws2
@@ -144,6 +185,17 @@ bindsym $mod+7 workspace number $ws7
 bindsym $mod+8 workspace number $ws8
 bindsym $mod+9 workspace number $ws9
 bindsym $mod+0 workspace number $ws10
+
+bindsym $mod+Mod2+KP_1 workspace number $ws1
+bindsym $mod+Mod2+KP_2 workspace number $ws2
+bindsym $mod+Mod2+KP_3 workspace number $ws3
+bindsym $mod+Mod2+KP_4 workspace number $ws4
+bindsym $mod+Mod2+KP_5 workspace number $ws5
+bindsym $mod+Mod2+KP_6 workspace number $ws6
+bindsym $mod+Mod2+KP_7 workspace number $ws7
+bindsym $mod+Mod2+KP_8 workspace number $ws8
+bindsym $mod+Mod2+KP_9 workspace number $ws9
+bindsym $mod+Mod2+KP_0 workspace number $ws10
 
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace number $ws1
