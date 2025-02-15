@@ -9,8 +9,8 @@ configuration{
   disable-history: false;
   hide-scrollbar: true;
   display-combi: "All";
-  display-run: "Programs";
-  display-drun: "Desktop Files";
+  display-run: "Run";
+  display-drun: "D-Run";
   display-window: "Window";
   sidebar-mode: true;
   drun {
@@ -19,3 +19,5 @@ configuration{
      parse-system: true;
   }
 }
+
+@theme "nord"
