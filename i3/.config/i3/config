@@ -129,6 +129,8 @@ bindsym Print exec gnome-screenshot -i
 # lock
 bindsym $mod+Ctrl+l exec "i3lock -i ~/Pictures/background.png"
 
+hide_edge_borders smart
+
 # focus the child container
 #bindsym $mod+d focus child
 
