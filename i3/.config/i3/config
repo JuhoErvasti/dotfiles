@@ -13,6 +13,7 @@ set $mod Mod4
 
 exec_always --no-startup-id setxkbmap -option caps:escape
 exec_always --no-startup-id ~/.config/polybar/launch.sh
+exec_always --no-startup-id i3wsr
 
 exec --no-startup-id picom
 exec --no-startup-id feh --bg-scale ~/Pictures/background.png
