@@ -53,6 +53,9 @@ bindsym XF86AudioPause exec --no-startup-id playerctl pause
 bindsym XF86AudioNext exec --no-startup-id playerctl next
 bindsym XF86AudioPrev exec --no-startup-id playerctl previous
 
+# bind calculator key
+bindsym XF86Calculator exec gnome-calculator
+
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
