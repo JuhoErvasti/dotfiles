@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Power Off Immediately
+Exec=poweroff
+Type=Application
+Terminal=false
+X-Desktop-File-Install-Version=0.26
