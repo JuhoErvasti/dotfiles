@@ -60,7 +60,6 @@ floating_modifier $mod
 # start a terminal
 bindsym $mod+Return exec i3-sensible-terminal
 
-
 # window floating options
 bindsym Mod1+Return floating toggle
 bindsym Mod5+Return floating toggle
@@ -299,10 +298,11 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
-# Start i3bar to display a workspace bar (plus the system information i3status
-# finds out, if available)
-# bar {
-#         status_command i3status
-# }
+### make make some windows floaters automatically
 
-
+## QGIS
+for_window [title="Data Source Manager"] floating enable
+for_window [title="Data Source Manager"] border normal
+# attribute table
+for_window [title="Features Total"] floating enable
+for_window [title="Features Total"] border normal
