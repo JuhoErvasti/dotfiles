@@ -37,6 +37,9 @@ vim.lsp.set_log_level("off")
 -- Stop text wrapping
 vim.o.wrap = false
 
+-- Make mouse right click extend selection, not show pop-up
+vim.o.mousemodel = 'extend'
+
 -- Custom commands for copying stuff to clipboard
 vim.api.nvim_create_user_command('CopyBufferPath', ":let @+ = expand('%:p')", {})
 vim.api.nvim_create_user_command('CopyGDBBreakPoint', ":let @+ = 'break ' .. expand('%:p') .. ':' .. line('.')", {})
