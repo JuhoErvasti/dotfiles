@@ -4,14 +4,7 @@ killall -q polybar
 
 while pgrep -u $UID -x polybar >/dev/null; do sleep 1; done
 
-if type "xrandr"; then
-  for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
-    MONITOR=$m polybar --reload --config=~/.config/polybar/config.ini toph &
-  done
-else
-  polybar --reload --config=~/.config/polybar/config.ini toph &
-fi
+for m in $(polybar --list-monitors | cut -d":" -f1); do
+    MONITOR=$m polybar --reload toph --config=~/.config/polybar/config.ini &
+done
 
-# if [[ $(xrandr -q | grep 'HDMI-2 connected') ]]; then
-#   polybar top_external &
-# fi
