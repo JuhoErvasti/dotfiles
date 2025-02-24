@@ -9,6 +9,8 @@
 #
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
 
+focus_on_window_activation focus
+
 set $mod Mod4
 
 exec_always --no-startup-id setxkbmap -option caps:escape
