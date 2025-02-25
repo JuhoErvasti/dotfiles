@@ -132,13 +132,14 @@ bindsym $mod+Mod1+space floating toggle
 bindsym $mod+Mod5+space floating toggle
 
 # change focus between tiling / floating windows
-bindsym $mod+space focus mode_toggle
+# bindsym $mod+space focus mode_toggle
 
 # focus the parent container
 bindsym $mod+a focus parent
 
 # use rofi
-bindsym $mod+d exec rofi -show combi
+# bindsym $mod+d exec rofi -show combi
+bindsym $mod+space exec rofi -show combi
 
 # printscreen
 bindsym Print exec gnome-screenshot -i
