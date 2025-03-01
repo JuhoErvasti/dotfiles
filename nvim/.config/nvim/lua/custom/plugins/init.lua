@@ -44,4 +44,7 @@ vim.o.mousemodel = 'extend'
 vim.api.nvim_create_user_command('CopyBufferPath', ":let @+ = expand('%:p')", {})
 vim.api.nvim_create_user_command('CopyGDBBreakPoint', ":let @+ = 'break ' .. expand('%:p') .. ':' .. line('.')", {})
 
+-- Disable ~ symbols for empty lines (basically replaces them with a spacebar)
+vim.o.fcs = "eob: "
+
 return {}
