@@ -177,7 +177,7 @@ set $yellow             #f9e2af
 set $green              #a6e3a1
 set $teal               #94e2d5
 set $sky                #89dceb
-set $sapphire           #74c7ec
+set $sapphire           #74c7ec80
 set $blue               #89b4fa
 set $lavender           #b4befe
 set $text_white         #fffff0
@@ -200,14 +200,14 @@ set $focused_inactive_window            #5555557d
 set $unfocused_window                   #3538397d
 
 # <colorclass>          <border>                        <background>                    <text>                <indicator>     <child_border>
-client.focused          $focused_window                 $focused_window                 $text_white           $transparent    $transparent
+client.focused          $focused_window                 $focused_window                 $text_white           $transparent    $sapphire
 client.focused_inactive $focused_inactive_window        $focused_inactive_window        $text_grey            $transparent    $transparent
 client.unfocused        $unfocused_window               $unfocused_window               $text_grey            $transparent    $transparent
 client.urgent           $transparent                    $transparent                    $peach                $transparent    $transparent
 client.placeholder      $transparent                    $transparent                    $text_black           $transparent    $transparent
 client.background       $base
 
-default_border pixel 0
+default_border pixel 2
 default_floating_border normal
 
 # gaps
