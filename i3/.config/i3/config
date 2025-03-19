@@ -210,6 +210,8 @@ client.background       $base
 default_border pixel 3
 default_floating_border normal
 
+for_window [floating] border color $mantle
+
 # gaps
 gaps inner 5
 gaps outer 10
