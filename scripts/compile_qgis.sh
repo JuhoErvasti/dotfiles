@@ -1,6 +1,11 @@
 #!/bin/bash
 
+#example: ./compile_qgis.sh --debug -DBUILD_WITH_QT6=ON -DWITH_QTWEBKIT=OFF -DWITH_QTWEBENGINE=ON
+
 set -e
+
+export CC="/usr/bin/gcc"
+export CXX="/usr/bin/g++"
 
 ccache --set-config sloppiness=pch_defines,time_macros
 
@@ -16,7 +21,6 @@ show_usage() {
 
 STARTDIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-export BUILD_TYPE="Debug"
 pos_arguments=""
 
 for var in "$@"; do
@@ -27,6 +31,12 @@ for var in "$@"; do
 
   if [ $var == "--release" ]; then
     export BUILD_TYPE="Release"
+    continue
+  fi
+
+  if [ $var == "--debug" ]; then
+    export BUILD_TYPE="Debug"
+    continue
   fi
 
   if [ $var != --* ]; then
@@ -35,14 +45,16 @@ for var in "$@"; do
 
 done
 
-
 if [ "$BUILD_TYPE" = "" ]; then
-  export BUILD_TYPE="Debug"
+  echo "Build type must be selected"
+  show_usage
+  exit 1
 fi
+
 
 BUILDDIR="$STARTDIR/build_$BUILD_TYPE"
 
-cmake . -G Ninja -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_EXPORT_COMPILE_COMMANDS=true -DCMAKE_BUILD_TYPE=$BUILD_TYPE $pos_arguments -B $BUILDDIR
+cmake . -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=true -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_WITH_QT6=ON -DWITH_QTWEBKIT=OFF -DWITH_QTWEBENGINE=ON -B $BUILDDIR
 
 if [ -f "$compile_commands_builddir" ]; then
   if [ -f "$compile_commands_repodir" ]; then
@@ -56,4 +68,4 @@ if [ -f "$compile_commands_builddir" ]; then
   fi
 fi
 
-cmake --build $BUILDDIR
+cmake --build $BUILDDIR --parallel 6
