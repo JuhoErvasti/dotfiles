@@ -777,7 +777,7 @@ require('lazy').setup({
             luasnip.lsp_expand(args.body)
           end,
         },
-        completion = { completeopt = 'menu,menuone,noinsert' },
+        completion = { completeopt = 'menu,menuone,noinsert,preview' },
 
         -- For an understanding of why these mappings were
         -- chosen, you will need to read `:help ins-completion`
@@ -797,6 +797,7 @@ require('lazy').setup({
           --  This will auto-import if your LSP supports it.
           --  This will expand snippets if the LSP sent a snippet.
           ['<C-y>'] = cmp.mapping.confirm { select = true },
+          ['<CR>'] = cmp.mapping.abort(),
 
           -- If you prefer more traditional completion keymaps,
           -- you can uncomment the following lines
@@ -808,7 +809,7 @@ require('lazy').setup({
           -- Manually trigger a completion from nvim-cmp.
           --  Generally you don't need this, because nvim-cmp will display
           --  completions whenever it has completion options available.
-          ['<C-Space>'] = cmp.mapping.complete {},
+          ['<C-a>'] = cmp.mapping.complete {},
 
           -- Think of <c-l> as moving to the right of your snippet expansion.
           --  So if you have a snippet that's like:
@@ -1031,9 +1032,6 @@ vim.api.nvim_set_keymap('n', '<C-j>', '<cmd> TmuxNavigateDown<CR>', { noremap = 
 vim.api.nvim_set_keymap('n', '<C-k>', '<cmd> TmuxNavigateUp<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<C-l>', '<cmd> TmuxNavigateRight<CR>', { noremap = true, silent = true })
 
--- Select all
-vim.api.nvim_set_keymap('n', '<C-a>', 'ggVG', { noremap = true, silent = true })
-
 -- Conflicts with tmux keymap, also it's somewhat easy to misclick and used to open help in that case
 vim.api.nvim_set_keymap('n', '<F1>', '<nop>', { noremap = true, silent = true })
 
@@ -1067,4 +1065,3 @@ vim.api.nvim_set_keymap('n', ';', '$a;<ESC>', { noremap = true, silent = true})
 
 -- Select to the end of a line, not including the line break
 vim.api.nvim_set_keymap('n', 'F', 'v$h', { noremap = true, silent = true})
-
