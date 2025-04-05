@@ -1065,3 +1065,6 @@ vim.api.nvim_set_keymap('n', ';', '$a;<ESC>', { noremap = true, silent = true})
 
 -- Select to the end of a line, not including the line break
 vim.api.nvim_set_keymap('n', 'F', 'v$h', { noremap = true, silent = true})
+
+-- Show diagnostic message in pop-up
+vim.api.nvim_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', { noremap=true, silent=true })
