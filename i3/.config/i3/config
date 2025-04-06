@@ -18,7 +18,7 @@ exec_always --no-startup-id ~/.config/polybar/launch.sh
 exec_always --no-startup-id ~/.cargo/bin/i3wsr --config ~/.config/i3wsr/config.toml
 exec_always --no-startup-id numlockx on
 
-exec_always --no-startup-id picom --experimental-backends
+exec_always --no-startup-id picom
 exec_always --no-startup-id feh --bg-scale ~/Pictures/background.png
 
 # Font for window titles. Will also be used by the bar unless a different font
