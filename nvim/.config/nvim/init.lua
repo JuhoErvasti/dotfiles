@@ -796,7 +796,7 @@ require('lazy').setup({
           -- Accept ([y]es) the completion.
           --  This will auto-import if your LSP supports it.
           --  This will expand snippets if the LSP sent a snippet.
-          ['<CR>'] = cmp.mapping.confirm { select = true },
+          ['<CR>'] = cmp.mapping.confirm {},
 
           -- If you prefer more traditional completion keymaps,
           -- you can uncomment the following lines
@@ -1067,3 +1067,7 @@ vim.api.nvim_set_keymap('n', 'F', 'v$h', { noremap = true, silent = true})
 
 -- Show diagnostic message in pop-up
 vim.api.nvim_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', { noremap=true, silent=true })
+
+-- <C-s> save
+vim.api.nvim_set_keymap('n', '<C-s>', ':w<CR>', { noremap=true, silent=true })
+
