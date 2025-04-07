@@ -790,6 +790,10 @@ require('lazy').setup({
           ['<C-p>'] = cmp.mapping.select_prev_item(),
 
           -- Scroll the documentation window [b]ack / [f]orward
+          ['<C-b>'] = cmp.mapping.scroll_docs(-8),
+          ['<C-f>'] = cmp.mapping.scroll_docs(8),
+
+          -- Scroll the documentation window [u]p / [d]own
           ['<C-b>'] = cmp.mapping.scroll_docs(-4),
           ['<C-f>'] = cmp.mapping.scroll_docs(4),
 
@@ -1066,7 +1070,7 @@ vim.api.nvim_set_keymap('n', ';', '$a;<ESC>', { noremap = true, silent = true})
 vim.api.nvim_set_keymap('n', 'F', 'v$h', { noremap = true, silent = true})
 
 -- Show diagnostic message in pop-up
-vim.api.nvim_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', { noremap=true, silent=true })
+vim.api.nvim_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', { noremap=true, silent=true })
 
 -- <C-s> save
 vim.api.nvim_set_keymap('n', '<C-s>', ':w<CR>', { noremap=true, silent=true })
