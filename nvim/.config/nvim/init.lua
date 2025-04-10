@@ -1063,9 +1063,6 @@ vim.api.nvim_set_keymap('n', '-', '5<C-w><', { noremap = true, silent = true})
 vim.api.nvim_set_keymap('n', '<A-+>', '15<C-w>>', { noremap = true, silent = true})
 vim.api.nvim_set_keymap('n', '<A-->', '15<C-w><', { noremap = true, silent = true})
 
--- Write ; at the end of a line
-vim.api.nvim_set_keymap('n', ';', '$a;<ESC>', { noremap = true, silent = true})
-
 -- Select to the end of a line, not including the line break
 vim.api.nvim_set_keymap('n', 'F', 'v$h', { noremap = true, silent = true})
 
