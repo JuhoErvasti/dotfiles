@@ -15,7 +15,8 @@ show_usage() {
   echo -e "\t- Argument order does not matter"
   echo -e "\t- Valid arguments are:"
   echo -e "\t\t--help: shows this message and exits"
-  echo -e "\t\t--release: sets build type as release, without this the build type is debug"
+  echo -e "\t\t--release: sets build type as release"
+  echo -e "\t\t--debug: sets build type as debug"
   echo -e "\t\t- any additional arguments are passed to CMake"
 }
 
