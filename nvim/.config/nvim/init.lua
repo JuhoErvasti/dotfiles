@@ -1018,7 +1018,7 @@ vim.o.fcs = "eob: "
 -- Keymaps:
 
 -- Switch between source / header
-vim.api.nvim_set_keymap('n', '<F4>', ':ClangdSwitchSourceHeader<CR>', { noremap = true , silent = true })
+vim.api.nvim_set_keymap('n', '<F4>', ':LspClangdSwitchSourceHeader<CR>', { noremap = true , silent = true })
 
 -- Jump to next/previous diagnostics message
 vim.api.nvim_set_keymap('n', 'Å', '[d', { noremap = false, silent = true })
