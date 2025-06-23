@@ -42,8 +42,6 @@ function git {
         echo "/usr/bin/git $comms"
     }
 
-    . /usr/share/bash-completion/completions/git
-
     if [ "$1" == push ]; then
         force_push=false
         for arg in $@; do
