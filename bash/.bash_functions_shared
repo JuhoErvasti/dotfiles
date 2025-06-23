@@ -58,6 +58,26 @@ function git {
             return 1
         fi
 
+        branch_name="$(/usr/bin/git symbolic-ref HEAD 2>/dev/null)" ||
+        branch_name="(unnamed branch)"     # detached HEAD
+
+        branch_name=${branch_name##refs/heads/}
+
+        pushing_to_current_branch=false
+        for arg in $@; do
+            if [ "$arg" == "$branch_name" ]; then # might not be a waterproof check but probably works 99.9% of the time
+                pushing_to_current_branch=true
+                break
+            fi
+        done
+
+        if [ "$pushing_to_current_branch" = false ]; then
+            echo "Are you sure you want to push to a different branch you're currently checked out on?"
+            give_suggestion 
+            return 1
+        fi
+
+
         if [ "$force_push" == true ]; then
             protected_branches=(main master)
 
