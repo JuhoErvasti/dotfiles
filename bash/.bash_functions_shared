@@ -1,0 +1,79 @@
+function docker-compose {
+    echo "ERROR: Lose the dash:"
+    echo -e "\tdocker compose $@"
+}
+
+function venv {
+    orig=$(pwd)
+    dir=$(pwd)
+
+    while [ "$dir" != "/" ]; do
+        . .venv/bin/activate > /dev/null 2>&1
+
+        if [ "$?" == 0 ]; then
+            break;
+        fi
+
+        dir="$(dirname "$dir")"
+
+        cd $dir
+    done
+
+    cd $orig
+}
+
+function cd.. {
+    if [[ "$1" == "" ]]; then
+        echo -e "You have tried to use the custom-defined cd.. function."
+        echo -e "Either give it a number (n) as an argument (go up n directories)."
+        echo -e "Or if you intended to go up only one directory, use cd .. like you're supposed to."
+        return
+    fi
+
+    for ((i = 0; i < $1; i++)); do
+        cd ..
+    done
+}
+
+function git {
+    comms=$@
+    function give_suggestion {
+        echo "If you are absolutely certain you want to do this, run:"
+        echo "/usr/bin/git $comms"
+    }
+
+    . /usr/share/bash-completion/completions/git
+
+    if [ "$1" == push ]; then
+        force_push=false
+        for arg in $@; do
+            if [ "$arg" == "--force" ] || [ "$arg" == "-f" ]; then
+                force_push=true
+            fi
+        done
+
+        if [[ "$#" < 3 || ("$#" == 3 && "$force_push" == true) ]]; then
+            echo $#
+            echo $force_push
+            echo "Do not push without specifying remote and branch..."
+            give_suggestion 
+            return 1
+        fi
+
+        if [ "$force_push" == true ]; then
+            protected_branches=(main master)
+
+            for pbranch in ${protected_branches[@]}; do
+                for arg in $@; do
+                    if [ "$arg" == "$pbranch" ]; then
+                        echo "You really should force push to $4 only with extreme caution!"
+                        give_suggestion
+                        return 1
+                    fi
+                done
+            done
+        fi
+    fi
+
+    /usr/bin/git $@
+}
