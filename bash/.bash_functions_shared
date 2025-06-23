@@ -53,8 +53,6 @@ function git {
         done
 
         if [[ "$#" < 3 || ("$#" == 3 && "$force_push" == true) ]]; then
-            echo $#
-            echo $force_push
             echo "Do not push without specifying remote and branch..."
             give_suggestion 
             return 1
