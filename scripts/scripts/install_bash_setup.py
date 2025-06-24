@@ -1,0 +1,79 @@
+#!/usr/bin/env python3
+
+import sys
+
+from pathlib import Path
+
+BASHRC=Path.home() / ".bashrc"
+
+UNIVERSAL_ADDITIONS = (
+    "source ~/.bash_functions_shared",
+    """if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
+
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi""",
+    """alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'""",
+    """if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi""",
+    r"""force_color_prompt=yes
+color_prompt=yes
+parse_git_branch() {
+  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(:\1)/'
+}
+if [ "$color_prompt" = yes ]; then
+  PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u\[\033[00m\]:\[\033[01;34m\]\w\[\033[01;31m\] $(parse_git_branch)\[\033[00m\]\$ '
+else
+  PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w $(parse_git_branch)\$ '
+fi
+unset color_prompt force_color_prompt""",
+    "set -o ignoreeof",
+)
+
+NONCONTAINER_ADDITIONS = (
+    "setxkbmap -option caps:escape",
+    "setxkbmap fi",
+)
+
+def main() -> None:
+    if not BASHRC.exists():
+        print(f"ERROR: {BASHRC} does not exist!")
+        sys.exit(1)
+
+    bashrc_text = ""
+
+    with open(BASHRC, "r") as file:
+        bashrc_text = file.read()
+
+    if not bashrc_text:
+        print(f"ERROR: Could not read {BASHRC}")
+        sys.exit(1)
+
+    is_container = input("Are you running this script inside a container? (y/n): ").lower().strip() == 'y'
+
+    with open(BASHRC, "a") as file:
+        for addition in UNIVERSAL_ADDITIONS:
+            if addition not in bashrc_text:
+                file.write(addition)
+                file.write("\n\n")
+
+        if not is_container:
+            for addition in NONCONTAINER_ADDITIONS:
+                if addition not in bashrc_text:
+                    file.write(addition)
+                    file.write("\n\n")
+
+
+if __name__ == "__main__":
+    main()
+
+    sys.exit(0)
+
