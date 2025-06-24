@@ -1,6 +1,6 @@
 configuration{
   modi: "combi,run,window,drun";
-  combi-modi: "window,drun,run";
+  combi-modi: "drun,run,window";
   icon-theme: "Oranchelo";
   show-icons: true;
   terminal: "alacritty";
