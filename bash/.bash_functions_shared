@@ -93,3 +93,15 @@ function git {
 
     /usr/bin/git $@
 }
+
+function cl {
+  contents="$@"
+  size=${#contents}
+  echo -n $@ | xclip -selection clipboard
+
+  if [ "$size" -lt 140 ]; then
+    echo "\"$contents\" copied to clipboard!"
+  else
+    echo 'Input copied to clipboard!'
+  fi
+}
