@@ -82,7 +82,7 @@ function git {
             for pbranch in ${protected_branches[@]}; do
                 for arg in $@; do
                     if [ "$arg" == "$pbranch" ]; then
-                        echo "You really should force push to $4 only with extreme caution!"
+                        echo "You really should force push to $arg only with extreme caution!"
                         give_suggestion
                         return 1
                     fi
