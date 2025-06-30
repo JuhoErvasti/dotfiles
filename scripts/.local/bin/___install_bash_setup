@@ -36,6 +36,10 @@ else
 fi
 unset color_prompt force_color_prompt""",
     "set -o ignoreeof",
+    """if [ -n "$VIRTUAL_ENV" ]; then
+    source $VIRTUAL_ENV/bin/activate
+fi
+""",
 )
 
 NONCONTAINER_ADDITIONS = (
@@ -57,7 +61,16 @@ def main() -> None:
         print(f"ERROR: Could not read {BASHRC}")
         sys.exit(1)
 
-    is_container = input("Are you running this script inside a container? (y/n): ").lower().strip() == 'y'
+    is_container = None
+    while is_container is None:
+        answer = input("Are you running this script inside a container? [y/N]: ").lower().strip()
+
+        if answer == "y":
+            is_container = True
+        elif answer == "n":
+            is_container = False
+        elif answer == "":
+            is_container = False
 
     with open(BASHRC, "a") as file:
         for addition in UNIVERSAL_ADDITIONS:
