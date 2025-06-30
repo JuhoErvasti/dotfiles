@@ -2,18 +2,16 @@
 
 set -e
 
-script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 supported_languages=(python cpp c rust)
 lang=$1
 lower_lang=${lang,,}
 script_config_dir=~/.config/_custom_scripts/start_dev
-
+compiled_args=(-x --split-build-pane -h --help -s --source-dir -c --compile-dir -b --binary-path -l --build-command -d --open-debugger -t --tmux-session-name -r --register -p --project)
 
 function _show_usage_general {
     echo -e "Usage: $(basename -- $0) <language> [options]"
     echo -e "Arguments:"
     echo -e "\t -h, --help: show this message"
-    echo -e "\t -p, --project <project-name>: open project of this name"
     echo -e "Supported languages:"
     echo -e -n "\t"
     for language in ${supported_languages[@]}; do
@@ -154,40 +152,37 @@ function _start_compiled {
         fi
     done
 
-
-    acceptable_args=(-x --split-build-pane -h --help -s --source-dir -c --compile-dir -b --binary-path -l --build-command -d --open-debugger -t --tmux-session-name -r --register -p --project)
-
     registering=false
 
     while [[ "$#" -gt 0 ]]; do
         case $1 in
             -s|--source-dir)
                 _verify_arg_has_value "$1" "$2"
-                _verify_arg_value "$1" "$2" "dir" "${acceptable_args[@]}"
+                _verify_arg_value "$1" "$2" "dir" "${compiled_args[@]}"
                 source_dir="$2"
                 shift
                 ;;
             -c|--compile-dir)
                 _verify_arg_has_value "$1" "$2"
-                _verify_arg_value "$1" "$2" "dir" "${acceptable_args[@]}"
+                _verify_arg_value "$1" "$2" "dir" "${compiled_args[@]}"
                 compile_dir="$2"
                 shift
                 ;;
             -b|--binary-path)
                 _verify_arg_has_value "$1" "$2"
-                _verify_arg_value "$1" "$2" "file" "${acceptable_args[@]}"
+                _verify_arg_value "$1" "$2" "file" "${compiled_args[@]}"
                 binary_path="$2"
                 shift
                 ;;
             -l|--build-command)
                 _verify_arg_has_value "$1" "$2"
-                _verify_arg_value "$1" "$2" "none" "${acceptable_args[@]}"
+                _verify_arg_value "$1" "$2" "none" "${compiled_args[@]}"
                 build_command="$2"
                 shift
                 ;;
             -t|--tmux-session-name)
                 _verify_arg_has_value "$1" "$2"
-                _verify_arg_value "$1" "$2" "none" "${acceptable_args[@]}"
+                _verify_arg_value "$1" "$2" "none" "${compiled_args[@]}"
                 tmux_session_name="$2"
                 shift
                 ;;
@@ -199,14 +194,14 @@ function _start_compiled {
                 ;;
             -x|--split-build-pane)
                 _verify_arg_has_value "$1" "$2"
-                _verify_arg_value "$1" "$2" "none" "${acceptable_args[@]}"
+                _verify_arg_value "$1" "$2" "none" "${compiled_args[@]}"
                 split_build_pane="$2"
                 shift
                 ;;
             -p|--project)
                 _verify_arg_has_value "$1" "$2"
                 _project_file="$lang_config_dir/$2.env"
-                _verify_arg_value "$1" "$_project_file" "none" "${acceptable_args[@]}"
+                _verify_arg_value "$1" "$_project_file" "none" "${compiled_args[@]}"
 
                 if [ ! -f "$_project_file" ]; then
                     echo "ERROR: project '$2' could not be found!"
@@ -282,13 +277,13 @@ function _start_compiled {
         read -p "Source directory: " source_dir
     fi
     _verify_arg_has_value "Source directory" "$source_dir"
-    _verify_arg_value "Source directory" "$source_dir" "dir" "${acceptable_args[@]}"
+    _verify_arg_value "Source directory" "$source_dir" "dir" "${compiled_args[@]}"
 
     if ! _has_value "$compile_dir"; then
         read -p "Compile directory (where will the compile/build command be run?): " compile_dir
     fi
     _verify_arg_has_value "Compile directory" "$compile_dir"
-    _verify_arg_value "Compile directory" "$compile_dir" "dir" "${acceptable_args[@]}"
+    _verify_arg_value "Compile directory" "$compile_dir" "dir" "${compiled_args[@]}"
 
     if [ "$open_debugger" == "" ]; then
         while true; do
@@ -307,7 +302,7 @@ function _start_compiled {
             read -p "Path of built binary (to debug): " binary_path
         fi
         _verify_arg_has_value "Binary path" "$binary_path"
-        _verify_arg_value "Binary path" "$binary_path" "file" "${acceptable_args[@]}"
+        _verify_arg_value "Binary path" "$binary_path" "file" "${compiled_args[@]}"
     fi
 
     if ! _has_value "$build_command"; then
