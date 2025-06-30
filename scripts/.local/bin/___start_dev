@@ -2,7 +2,7 @@
 
 set -e
 
-supported_languages=(python cpp c rust)
+supported_languages=(python cpp c rust bash)
 lang=$1
 lower_lang=${lang,,}
 script_config_dir=~/.config/_custom_scripts/start_dev
@@ -305,8 +305,10 @@ function _start_compiled {
         _verify_arg_value "Binary path" "$binary_path" "file" "${compiled_args[@]}"
     fi
 
-    if ! _has_value "$build_command"; then
-        read -p "Build command: " build_command
+    if [ "$_project_file" == "" ]; then
+        if ! _has_value "$build_command"; then
+            read -p "Build command: " build_command
+        fi
     fi
 
     if ! _has_value "$tmux_session_name"; then
@@ -426,7 +428,7 @@ if [ "$lower_lang" == "python" ]; then
     exit
 fi
 
-if [ "$lower_lang" == "c" ] || [ "$lower_lang" == "cpp" ] || [ "$lower_lang" == "rust" ];then
+if [ "$lower_lang" == "c" ] || [ "$lower_lang" == "cpp" ] || [ "$lower_lang" == "rust" ] || [ "$lower_lang" == "bash" ]; then
     _start_compiled "$@"
     exit
 fi
