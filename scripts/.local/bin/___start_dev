@@ -331,6 +331,14 @@ function _start_compiled {
         echo "open_debugger=\"$open_debugger\"" >> $project_file
         echo "split_build_pane=\"$split_build_pane\"" >> $project_file
 
+        project_script=~/.local/bin/___start_$project_name
+
+        echo "#!/bin/bash" > $project_script
+        echo >> $project_script
+        echo "___start_dev $lower_lang --project $project_name" >> $project_script
+
+        chmod +x $project_script
+
         exit 0
     fi
 
