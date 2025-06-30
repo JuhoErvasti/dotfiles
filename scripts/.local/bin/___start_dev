@@ -6,7 +6,8 @@ supported_languages=(python cpp c rust bash)
 lang=$1
 lower_lang=${lang,,}
 script_config_dir=~/.config/_custom_scripts/start_dev
-compiled_args=(-x --split-build-pane -h --help -s --source-dir -c --compile-dir -b --binary-path -l --build-command -d --open-debugger -t --tmux-session-name -r --register -p --project)
+compiled_args=(-x --split-build-pane -h --help -s --source-dir -c --compile-dir -b --binary-path -l --build-command -d --open-debugger -t --tmux-session-name -r --register -p --project -o --remove)
+python_args=(-h --help -s --source-dir -d --secondary-dir -c --secondary-dir-command -t --tmux-session-name -v --venv -r --register -x --remove -p --project)
 
 function _show_usage_general {
     echo -e "Usage: $(basename -- $0) <language> [options]"
@@ -132,6 +133,8 @@ function _start_compiled {
     function _show_usage {
         echo -e "Usage: $(basename -- $0) $lang [options]"
         echo -e "Configuration related arguments will be prompted for if not directly entered."
+        echo -e "Commands:"
+        echo -e "\t ls: list registered projects"
         echo -e "Arguments:"
         echo -e "\t -h, --help: show this message"
         echo -e "\t -s, --source_dir <path>: path to the source directory (nvim will be opened here)"
@@ -142,6 +145,7 @@ function _start_compiled {
         echo -e "\t -d, --open-debugger: flag whether debugger should be opened"
         echo -e "\t -x, --split-build-pane <command>: if given, split building pane and auto-fill command"
         echo -e "\t -r, --register: will save project config instead of opening"
+        echo -e "\t -o, --remove <project>: remove project"
         echo -e "\t -p, --project <project-name>: opens a saved project"
     }
 
@@ -156,6 +160,9 @@ function _start_compiled {
 
     while [[ "$#" -gt 0 ]]; do
         case $1 in
+            ls)
+                list_only=true
+                ;;
             -s|--source-dir)
                 _verify_arg_has_value "$1" "$2"
                 _verify_arg_value "$1" "$2" "dir" "${compiled_args[@]}"
@@ -198,6 +205,37 @@ function _start_compiled {
                 split_build_pane="$2"
                 shift
                 ;;
+            -o|--remove)
+                _verify_arg_has_value "$1" "$2"
+                _project_file="$lang_config_dir/$2.env"
+                _verify_arg_value "$1" "$_project_file" "none" "${python_args[@]}"
+
+                if [ ! -f "$_project_file" ]; then
+                    echo "ERROR: project '$2' could not be found!"
+
+                    if [ -d "$lang_config_dir" ]; then
+                        echo "Available projects:"
+                        echo -ne "\t"
+                        for file in "$lang_config_dir/*"; do
+                            filename=$(basename -- $file)
+                            filename="${filename%.*}"
+
+                            if [ "$filename" == "*" ]; then
+                                continue
+                            fi
+
+                            echo $filename
+                        done
+                    fi
+
+                    _show_usage
+                    exit 1
+                fi
+                _proj_name="$2"
+                removing=true
+
+                shift
+                ;;
             -p|--project)
                 _verify_arg_has_value "$1" "$2"
                 _project_file="$lang_config_dir/$2.env"
@@ -212,6 +250,10 @@ function _start_compiled {
                         for file in "$lang_config_dir/*"; do
                             filename=$(basename -- $file)
                             filename="${filename%.*}"
+
+                            if [ "$filename" == "*" ]; then
+                                continue
+                            fi
 
                             echo $filename
                         done
@@ -230,6 +272,45 @@ function _start_compiled {
         esac
         shift
     done
+
+    if [ "$list_only" == true ]; then
+        if [ -d "$lang_config_dir" ]; then
+            for file in "$lang_config_dir/*"; do
+                filename=$(basename -- $file)
+                filename="${filename%.*}"
+
+                if [ "$filename" == "*" ]; then
+                    continue
+                fi
+
+                echo $filename
+            done
+        fi
+        exit 0
+    fi
+
+    if [ "$removing" == true ]; then
+        project_script=~/.local/bin/___dev_$lower_lang\_$_proj_name
+
+        echo "Following files will be deleted:"
+        echo -e "\t $project_script"
+        echo -e "\t $_project_file"
+
+        while true; do
+            read -p "Proceed? [y/N]: " yn
+            case $yn in
+                "") exit;;
+                [Nn]* ) exit;;
+                [Yy]* ) break;;
+                * ) echo "Invalid answer!";;
+            esac
+        done
+
+        rm "$project_script"
+        rm "$_project_file"
+
+        exit 0
+    fi
 
     if [ "$_project_file" != "" ]; then
         if [ "$registering" == true ]; then
@@ -333,7 +414,7 @@ function _start_compiled {
         echo "open_debugger=\"$open_debugger\"" >> $project_file
         echo "split_build_pane=\"$split_build_pane\"" >> $project_file
 
-        project_script=~/.local/bin/___start_$project_name
+        project_script=~/.local/bin/___dev_$lower_lang\_$project_name
 
         echo "#!/bin/bash" > $project_script
         echo >> $project_script
@@ -388,7 +469,291 @@ function _start_compiled {
 }
 
 function _start_python {
-    echo "Starting Python development..."
+    python_args=(-h --help -s --source-dir -c --compile-dir -b --binary-path -l --build-command -d --open-debugger -t --tmux-session-name -r --register -p --project)
+    function _show_usage {
+        echo -e "Usage: $(basename -- $0) $lang [options]"
+        echo -e "Configuration related arguments will be prompted for if not directly entered."
+        echo -e "Commands:"
+        echo -e "\t ls: list registered projects"
+        echo -e "Arguments:"
+        echo -e "\t -h, --help: show this message"
+        echo -e "\t -s, --source_dir <path>: path to the source directory (nvim will be opened here)"
+        echo -e "\t -d, --secondary-dir <path>: path of the smaller pane on window 1"
+        echo -e "\t -c, --secondary-dir-command <command>: this will be autofilled to secondary dir"
+        echo -e "\t -t, --tmux-session-name <name>: name of the tmux session"
+        echo -e "\t -v, --venv <path>: path to the venv directory"
+        echo -e "\t -r, --register: register instead of starting session"
+        echo -e "\t -x, --remove <project>: remove project"
+        echo -e "\t -p, --project: open from project"
+    }
+
+    for arg in "$@"; do
+        if [ "$arg" == "-h" ] || [ "$arg" == "--help" ]; then
+            _show_usage
+            exit 0
+        fi
+    done
+
+    registering=false
+
+    while [[ "$#" -gt 0 ]]; do
+        case $1 in
+            ls)
+                list_only=true
+                ;;
+            -s|--source-dir)
+                _verify_arg_has_value "$1" "$2"
+                _verify_arg_value "$1" "$2" "dir" "${python_args[@]}"
+                source_dir="$2"
+                shift
+                ;;
+            -d|--secondary-dir)
+                _verify_arg_has_value "$1" "$2"
+                _verify_arg_value "$1" "$2" "dir" "${python_args[@]}"
+                secondary_dir="$2"
+                shift
+                ;;
+            -c|--secondary-dir-command)
+                _verify_arg_has_value "$1" "$2"
+                _verify_arg_value "$1" "$2" "none" "${python_args[@]}"
+                secondary_dir_command="$2"
+                shift
+                ;;
+            -v|--venv)
+                _verify_arg_has_value "$1" "$2"
+                _verify_arg_value "$1" "$2" "dir" "${python_args[@]}"
+                venv="$2"
+                shift
+                ;;
+            -t|--tmux-session-name)
+                _verify_arg_has_value "$1" "$2"
+                _verify_arg_value "$1" "$2" "none" "${python_args[@]}"
+                tmux_session_name="$2"
+                shift
+                ;;
+            -r|--register)
+                registering=true
+                ;;
+            -x|--remove)
+                _verify_arg_has_value "$1" "$2"
+                _project_file="$lang_config_dir/$2.env"
+                _verify_arg_value "$1" "$_project_file" "none" "${python_args[@]}"
+
+                if [ ! -f "$_project_file" ]; then
+                    echo "ERROR: project '$2' could not be found!"
+
+                    if [ -d "$lang_config_dir" ]; then
+                        echo "Available projects:"
+                        echo -ne "\t"
+                        for file in "$lang_config_dir/*"; do
+                            filename=$(basename -- $file)
+                            filename="${filename%.*}"
+
+                            if [ "$filename" == "*" ]; then
+                                continue
+                            fi
+
+                            echo $filename
+                        done
+                    fi
+
+                    _show_usage
+                    exit 1
+                fi
+                _proj_name="$2"
+                removing=true
+
+                shift
+                ;;
+            -p|--project)
+                _verify_arg_has_value "$1" "$2"
+                _project_file="$lang_config_dir/$2.env"
+                _verify_arg_value "$1" "$_project_file" "none" "${python_args[@]}"
+
+                if [ ! -f "$_project_file" ]; then
+                    echo "ERROR: project '$2' could not be found!"
+
+                    if [ -d "$lang_config_dir" ]; then
+                        echo "Available projects:"
+                        echo -ne "\t"
+                        for file in "$lang_config_dir/*"; do
+                            filename=$(basename -- $file)
+                            filename="${filename%.*}"
+
+                            if [ "$filename" == "*" ]; then
+                                continue
+                            fi
+
+                            echo $filename
+                        done
+                    fi
+
+                    _show_usage
+                    exit 1
+                fi
+
+                shift
+                ;;
+            *)
+                echo "ERROR: Unknown argument passed: $1"
+                _show_usage
+                exit 1;;
+        esac
+        shift
+    done
+
+    if [ "$list_only" == true ]; then
+        if [ -d "$lang_config_dir" ]; then
+            for file in "$lang_config_dir/*"; do
+                filename=$(basename -- $file)
+                filename="${filename%.*}"
+
+
+                if [ "$filename" == "*" ]; then
+                    continue
+                fi
+
+                echo $filename
+            done
+        fi
+        exit 0
+    fi
+
+    if [ "$removing" == true ]; then
+        project_script=~/.local/bin/___dev_$lower_lang\_$_proj_name
+
+        echo "Following files will be deleted:"
+        echo -e "\t $project_script"
+        echo -e "\t $_project_file"
+
+        while true; do
+            read -p "Proceed? [y/N]: " yn
+            case $yn in
+                "") exit;;
+                [Nn]* ) exit;;
+                [Yy]* ) break;;
+                * ) echo "Invalid answer!";;
+            esac
+        done
+
+        rm "$project_script"
+        rm "$_project_file"
+
+        exit 0
+    fi
+
+    if [ "$_project_file" != "" ]; then
+        if [ "$registering" == true ]; then
+            echo "ERROR: opening and registering a project are mutually exclusive options!"
+            _show_usage
+            exit 1
+        fi
+        source "$_project_file"
+    fi
+
+    if [ "$registering" == true ]; then
+        read -p "Name of project: " project_name
+
+        if [ "$project_name" == "" ]; then
+            # TODO: if you want to get really fancy I guess it would be good
+            # to check if the project name is also something that makes sense
+            # as a filename, which it will be used as...
+            # but I guess with the limited scope that's probably unnecessary
+            echo "ERROR: project name cannot be empty!"
+            exit 1
+        fi
+
+        if [ ! -d "$lang_config_dir" ]; then
+            mkdir -p "$lang_config_dir"
+        fi
+
+        project_file="$lang_config_dir/$project_name.env"
+
+        if [ -f "$project_file" ]; then
+            while true; do
+                read -p "Project '$project_name' already registered. Overwrite? [y/N/(e)dit] " yn
+                case $yn in
+                    "") exit;;
+                    [Nn]* ) exit;;
+                    [Yy]* ) break;;
+                    [Ee]* ) $EDITOR $project_file; exit;;
+                    * ) echo "Invalid answer!";;
+                esac
+            done
+        fi
+    fi
+
+    if ! _has_value "$source_dir"; then
+        read -p "Source directory: " source_dir
+    fi
+    _verify_arg_has_value "Source directory" "$source_dir"
+    _verify_arg_value "Source directory" "$source_dir" "dir" "${python_args[@]}"
+
+    if ! _has_value "$secondary_dir"; then
+        read -p "Secondary directory: " secondary_dir
+    fi
+    _verify_arg_has_value "Secondary directory" "$secondary_dir"
+    _verify_arg_value "Secondary directory" "$secondary_dir" "dir" "${python_args[@]}"
+
+    if ! _has_value "$venv"; then
+        read -p "Path to venv: " venv
+    fi
+    _verify_arg_has_value "venv" "$venv"
+    _verify_arg_value "venv" "$venv" "dir" "${python_args[@]}"
+
+    if ! _has_value "$tmux_session_name"; then
+        read -p "Tmux session name: " tmux_session_name
+    fi
+    _verify_arg_has_value "Tmux session name" $tmux_session_name
+
+    if [ "$_project_file" == "" ]; then
+        if ! _has_value "$secondary_dir_command"; then
+            read -p "Secondary pane command: " secondary_dir_command
+        fi
+    fi
+
+    if [ "$registering" == true ]; then
+
+        echo "project_name=\"$project_name\"" > $project_file
+        echo "source_dir=\"$source_dir\"" >> $project_file
+        echo "secondary_dir=\"$secondary_dir\"" >> $project_file
+        echo "secondary_dir_command=\"$secondary_dir_command\"" >> $project_file
+        echo "tmux_session_name=\"$tmux_session_name\"" >> $project_file
+        echo "venv=\"$venv\"" >> $project_file
+
+        project_script=~/.local/bin/___dev_$lower_lang\_$project_name
+
+        echo "#!/bin/bash" > $project_script
+        echo >> $project_script
+        echo "___start_dev $lower_lang --project $project_name" >> $project_script
+
+        chmod +x $project_script
+
+        exit 0
+    fi
+
+    _check_required_arg "--source-dir" "$source_dir"
+    _check_required_arg "--secondary-dir" "$secondary_dir"
+    _check_required_arg "--tmux-session-name" "$tmux_session_name"
+    _check_required_arg "--venv" "$venv"
+
+    tmux new-session -d -s "$tmux_session_name" -e "VIRTUAL_ENV=$venv"
+
+    tmux send "cd $source_dir; clear" ENTER
+    tmux send "nvim && clear" ENTER
+
+    tmux split-pane
+    tmux resize-pane -t 1 -y 90%
+    tmux send "cd $secondary_dir; clear" ENTER
+    tmux send "$secondary_dir_command"
+
+    tmux new-window
+    tmux send "cd $secondary_dir; clear" ENTER
+
+    tmux select-window -t 1
+    tmux select-pane -t 1
+
+    tmux a
 }
 
 if [ "$#" == 0 ]; then
