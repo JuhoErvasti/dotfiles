@@ -1,0 +1,430 @@
+#!/bin/bash
+
+set -e
+
+script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+supported_languages=(python cpp c rust)
+lang=$1
+lower_lang=${lang,,}
+script_config_dir=~/.config/_custom_scripts/start_dev
+
+
+function _show_usage_general {
+    echo -e "Usage: $(basename -- $0) <language> [options]"
+    echo -e "Arguments:"
+    echo -e "\t -h, --help: show this message"
+    echo -e "\t -p, --project <project-name>: open project of this name"
+    echo -e "Supported languages:"
+    echo -e -n "\t"
+    for language in ${supported_languages[@]}; do
+        echo -e -n "$language "
+    done
+    echo
+    echo -e "For language specific options run:"
+    echo -e "\t$(basename -- $0) <language> --help"
+}
+
+if [ "$TMUX" != "" ]; then
+    echo "ERROR: don't run this inside a tmux session"
+    _show_usage_general
+    exit 1
+fi
+
+function _universal_usage {
+    if command -v _show_usage 2>&1 > /dev/null; then
+        _show_usage
+    else
+        _show_usage_general
+    fi
+}
+
+required_commands=(tmux nvim)
+
+for command in ${required_commands[@]}; do
+    if ! command -v $command 2>&1 > /dev/null; then
+        echo "ERROR: command '$command' not found. You probably need to install it."
+        _show_usage_general
+        exit 1
+    fi
+done
+
+function _has_value {
+    # $1 = variable
+
+    if [ "$1" == "" ]; then
+        return 1
+    else
+        return 0
+    fi
+}
+
+function _verify_arg_has_value {
+    # $1 = name of arg
+    # $2 = supposed value
+
+    if ! _has_value "$2"; then
+        echo "ERROR: argument '$1' requires a value!"
+        _universal_usage
+
+        exit 1
+    fi
+}
+
+function _verify_arg_value {
+    # $1 = name of arg
+    # $2 = value
+    # $3 = extra check, accepted values: file (is it a file), dir (is it a directory), none
+    # $@ (all the rest rest) = unnacceptable values
+    is_unacceptable=false
+    argument_name=$1
+    value=$2
+    extra_check=$3
+
+    if [ "$extra_check" == "file" ]; then
+        if [ ! -f "$value" ]; then
+            echo "ERROR: file '$value' does not exist (value for '$argument_name')!"
+            _universal_usage
+            exit 1
+        fi
+    fi
+
+    if [ "$extra_check" == "dir" ]; then
+        if [ ! -d "$value" ]; then
+            echo "ERROR: directory '$value' does not exist (value for '$argument_name')!"
+            _universal_usage
+            exit 1
+        fi
+    fi
+
+    shift
+    shift
+    shift
+    for no_good_value in ${@}; do
+        if [ "$value" == "$no_good_value" ]; then
+            is_unacceptable=true
+        fi
+    done
+
+    if [ "$is_unacceptable" == true ]; then
+        echo "ERROR: unacceptable value for argument '$argument_name': $value!"
+
+        _universal_usage
+
+        exit 1
+    fi
+}
+
+function _check_required_arg {
+    # $1 = argument name
+    # $2 = argument value
+    # $3 = other argument this is required because of
+    if [ "$2" == "" ]; then
+        echo "ERROR: required argument '$1' not given!"
+
+        if [ "$3" != "" ]; then
+            echo -e "\tContext: required because argument '$3' was given."
+        fi
+
+        _universal_usage
+        exit 1
+    fi
+}
+
+function _start_compiled {
+    function _show_usage {
+        echo -e "Usage: $(basename -- $0) $lang [options]"
+        echo -e "Configuration related arguments will be prompted for if not directly entered."
+        echo -e "Arguments:"
+        echo -e "\t -h, --help: show this message"
+        echo -e "\t -s, --source_dir <path>: path to the source directory (nvim will be opened here)"
+        echo -e "\t -c, --compile-dir <path>: path to the compile/build directory (build command will be run here)"
+        echo -e "\t -b, --binary-path <path>: if debugging, path of debugged binary"
+        echo -e "\t -l, --build-command <command>: command which will be auto-filled (not executed) for building pane"
+        echo -e "\t -t, --tmux-session-name <name>: name of tmux session"
+        echo -e "\t -d, --open-debugger: flag whether debugger should be opened"
+        echo -e "\t -x, --split-build-pane <command>: if given, split building pane and auto-fill command"
+        echo -e "\t -r, --register: will save project config instead of opening"
+        echo -e "\t -p, --project <project-name>: opens a saved project"
+    }
+
+    for arg in "$@"; do
+        if [ "$arg" == "-h" ] || [ "$arg" == "--help" ]; then
+            _show_usage
+            exit 0
+        fi
+    done
+
+
+    acceptable_args=(-x --split-build-pane -h --help -s --source-dir -c --compile-dir -b --binary-path -l --build-command -d --open-debugger -t --tmux-session-name -r --register -p --project)
+
+    registering=false
+
+    while [[ "$#" -gt 0 ]]; do
+        case $1 in
+            -s|--source-dir)
+                _verify_arg_has_value "$1" "$2"
+                _verify_arg_value "$1" "$2" "dir" "${acceptable_args[@]}"
+                source_dir="$2"
+                shift
+                ;;
+            -c|--compile-dir)
+                _verify_arg_has_value "$1" "$2"
+                _verify_arg_value "$1" "$2" "dir" "${acceptable_args[@]}"
+                compile_dir="$2"
+                shift
+                ;;
+            -b|--binary-path)
+                _verify_arg_has_value "$1" "$2"
+                _verify_arg_value "$1" "$2" "file" "${acceptable_args[@]}"
+                binary_path="$2"
+                shift
+                ;;
+            -l|--build-command)
+                _verify_arg_has_value "$1" "$2"
+                _verify_arg_value "$1" "$2" "none" "${acceptable_args[@]}"
+                build_command="$2"
+                shift
+                ;;
+            -t|--tmux-session-name)
+                _verify_arg_has_value "$1" "$2"
+                _verify_arg_value "$1" "$2" "none" "${acceptable_args[@]}"
+                tmux_session_name="$2"
+                shift
+                ;;
+            -d|--open-debugger)
+                open_debugger=true
+                ;;
+            -r|--register)
+                registering=true
+                ;;
+            -x|--split-build-pane)
+                _verify_arg_has_value "$1" "$2"
+                _verify_arg_value "$1" "$2" "none" "${acceptable_args[@]}"
+                split_build_pane="$2"
+                shift
+                ;;
+            -p|--project)
+                _verify_arg_has_value "$1" "$2"
+                _project_file="$lang_config_dir/$2.env"
+                _verify_arg_value "$1" "$_project_file" "none" "${acceptable_args[@]}"
+
+                if [ ! -f "$_project_file" ]; then
+                    echo "ERROR: project '$2' could not be found!"
+
+                    if [ -d "$lang_config_dir" ]; then
+                        echo "Available projects:"
+                        echo -ne "\t"
+                        for file in "$lang_config_dir/*"; do
+                            filename=$(basename -- $file)
+                            filename="${filename%.*}"
+
+                            echo $filename
+                        done
+                    fi
+
+                    _show_usage
+                    exit 1
+                fi
+
+                shift
+                ;;
+            *)
+                echo "ERROR: Unknown argument passed: $1"
+                _show_usage
+                exit 1;;
+        esac
+        shift
+    done
+
+    if [ "$_project_file" != "" ]; then
+        if [ "$registering" == true ]; then
+            echo "ERROR: opening and registering a project are mutually exclusive options!"
+            _show_usage
+            exit 1
+        fi
+        source "$_project_file"
+    fi
+
+    if [ "$registering" == true ]; then
+        read -p "Name of project: " project_name
+
+        if [ "$project_name" == "" ]; then
+            # TODO: if you want to get really fancy I guess it would be good
+            # to check if the project name is also something that makes sense
+            # as a filename, which it will be used as...
+            # but I guess with the limited scope that's probably unnecessary
+            echo "ERROR: project name cannot be empty!"
+            exit 1
+        fi
+
+        if [ ! -d "$lang_config_dir" ]; then
+            mkdir -p "$lang_config_dir"
+        fi
+
+        project_file="$lang_config_dir/$project_name.env"
+
+        if [ -f "$project_file" ]; then
+            while true; do
+                read -p "Project '$project_name' already registered. Overwrite? [y/N/(e)dit] " yn
+                case $yn in
+                    "") exit;;
+                    [Nn]* ) exit;;
+                    [Yy]* ) break;;
+                    [Ee]* ) $EDITOR $project_file; exit;;
+                    * ) echo "Invalid answer!";;
+                esac
+            done
+        fi
+    fi
+
+
+    if ! _has_value "$source_dir"; then
+        read -p "Source directory: " source_dir
+    fi
+    _verify_arg_has_value "Source directory" "$source_dir"
+    _verify_arg_value "Source directory" "$source_dir" "dir" "${acceptable_args[@]}"
+
+    if ! _has_value "$compile_dir"; then
+        read -p "Compile directory (where will the compile/build command be run?): " compile_dir
+    fi
+    _verify_arg_has_value "Compile directory" "$compile_dir"
+    _verify_arg_value "Compile directory" "$compile_dir" "dir" "${acceptable_args[@]}"
+
+    if [ "$open_debugger" == "" ]; then
+        while true; do
+            read -p "Open debugger: [Y/n] " yn
+            case $yn in
+                "") open_debugger=true; break;;
+                [Yy]* ) open_debugger=true; break;;
+                [Nn]* ) open_debugger=false; break;;
+                * ) echo "Invalid answer!";;
+            esac
+        done
+    fi
+
+    if [ "$open_debugger" == true ]; then
+        if ! _has_value "$binary_path"; then
+            read -p "Path of built binary (to debug): " binary_path
+        fi
+        _verify_arg_has_value "Binary path" "$binary_path"
+        _verify_arg_value "Binary path" "$binary_path" "file" "${acceptable_args[@]}"
+    fi
+
+    if ! _has_value "$build_command"; then
+        read -p "Build command: " build_command
+    fi
+
+    if ! _has_value "$tmux_session_name"; then
+        read -p "Tmux session name: " tmux_session_name
+    fi
+    _verify_arg_has_value "Tmux session name" $tmux_session_name
+
+    if [ "$_project_file" == "" ]; then
+        if ! _has_value "$split_build_pane"; then
+            read -p "Split build pane command (leave empty if no split desired): " split_build_pane
+        fi
+    fi
+
+    if [ "$registering" == true ]; then
+
+        echo "project_name=\"$project_name\"" > $project_file
+        echo "source_dir=\"$source_dir\"" >> $project_file
+        echo "compile_dir=\"$compile_dir\"" >> $project_file
+        echo "binary_path=\"$binary_path\"" >> $project_file
+        echo "build_command=\"$build_command\"" >> $project_file
+        echo "tmux_session_name=\"$tmux_session_name\"" >> $project_file
+        echo "open_debugger=\"$open_debugger\"" >> $project_file
+        echo "split_build_pane=\"$split_build_pane\"" >> $project_file
+
+        exit 0
+    fi
+
+    _check_required_arg "--source-dir" "$source_dir"
+    _check_required_arg "--compile-dir" "$compile_dir"
+    _check_required_arg "--tmux-session-name" "$tmux_session_name"
+    if [ "$open_debugger" == true ]; then
+        _check_required_arg "--binary-path" "$binary_path" "--open-debugger"
+    fi
+
+    binary_dir=$(dirname -- "$binary_path")
+    binary_name=$(basename -- "$binary_path")
+
+    if [ "$tmux_session_name" != "" ]; then
+        tmux new-session -d -s "$tmux_session_name"
+    else
+        tmux new-session -d
+    fi
+
+    tmux send "cd $source_dir; clear" ENTER
+    tmux send "nvim && clear" ENTER
+
+    tmux split-pane
+    tmux resize-pane -t 1 -y 90%
+    tmux send "cd $compile_dir; clear" ENTER
+    tmux send "$build_command"
+    if [ "$split_build_pane" != "" ]; then
+        tmux split-window -h
+        tmux send "$split_build_pane"
+    fi
+
+    tmux new-window
+    tmux send "cd $compile_dir; clear" ENTER
+
+    if [ "$open_debugger" == true ]; then
+        tmux new-window
+        tmux send "cd $binary_dir; clear" ENTER
+        tmux send "gdb ./$binary_name" ENTER
+    fi
+
+    tmux select-window -t 1
+    tmux select-pane -t 1
+
+    tmux a
+}
+
+function _start_python {
+    echo "Starting Python development..."
+}
+
+if [ "$#" == 0 ]; then
+    echo "ERROR: no language specified!"
+    _show_usage_general
+    exit 1
+fi
+
+if [ "$#" == 1 ]; then
+    if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
+        _show_usage_general
+        exit 0
+    fi
+fi
+
+is_supported=false
+
+for language in ${supported_languages[@]}; do
+    if [ "$language" == "$lower_lang" ]; then
+        is_supported=true
+    fi
+done
+
+if [ "$is_supported" == false ]; then
+    echo "ERROR: language '$lang' is not supported"
+    _show_usage_general
+    exit 1
+fi
+
+lang_config_dir=$script_config_dir/$lower_lang
+
+# shift language argument out of the way
+shift
+
+if [ "$lower_lang" == "python" ]; then
+    _start_python "$@"
+    exit
+fi
+
+if [ "$lower_lang" == "c" ] || [ "$lower_lang" == "cpp" ] || [ "$lower_lang" == "rust" ];then
+    _start_compiled "$@"
+    exit
+fi
+
