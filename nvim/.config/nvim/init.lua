@@ -1077,7 +1077,7 @@ local remind_of_typehints = function()
           return
       end
       local buf = vim.api.nvim_create_buf(false, true)
-      vim.api.nvim_buf_set_lines(buf, 0, -1, true, {"Remember to turn on type hints!", "<leader>th"})
+      vim.api.nvim_buf_set_lines(buf, 0, -1, true, {"Once LSP is done loading & indexing, ", "remember to turn on type hints!", "<leader>th"})
 
       local ui = vim.api.nvim_list_uis()[1]
 
