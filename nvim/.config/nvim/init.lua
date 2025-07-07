@@ -1072,3 +1072,38 @@ vim.api.nvim_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<C
 -- <C-s> save
 vim.api.nvim_set_keymap('n', '<C-s>', ':w<CR>', { noremap=true, silent=true })
 
+local remind_of_typehints = function()
+      if vim.lsp.inlay_hint.is_enabled() then
+          return
+      end
+      local buf = vim.api.nvim_create_buf(false, true)
+      vim.api.nvim_buf_set_lines(buf, 0, -1, true, {"Remember to turn on type hints!", "<leader>th"})
+
+      local ui = vim.api.nvim_list_uis()[1]
+
+      local width = 100
+      local height = 20
+      local opts = {
+          relative = 'editor',
+          width = width,
+          height = height,
+          col = (ui.width - width) / 2,
+          row = (ui.height - height) / 2,
+          anchor = 'NW',
+          style = 'minimal',
+          focusable = true,
+          border = { "╔", "═" ,"╗", "║", "╝", "═", "╚", "║" },
+          title = "Inlay Hints ",
+      }
+
+      vim.api.nvim_open_win(
+          buf,
+          true,
+          opts
+      )
+end
+
+vim.api.nvim_create_autocmd({"BufReadPost"}, {
+    pattern = "*.rs",
+    callback = remind_of_typehints,
+})
