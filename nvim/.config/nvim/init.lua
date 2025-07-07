@@ -1076,6 +1076,15 @@ local remind_of_typehints = function()
       if vim.lsp.inlay_hint.is_enabled() then
           return
       end
+
+      -- check if buffer is in the /tmp/ folder, i.e. in 99.9% of cases nvimdiff is being used -> skip reminding
+      for _, b in ipairs(vim.api.nvim_list_bufs()) do
+          local path = vim.api.nvim_buf_get_name(b)
+          if string.sub(path, 1, 5) == "/tmp/" then
+            return
+          end
+      end
+
       local buf = vim.api.nvim_create_buf(false, true)
       vim.api.nvim_buf_set_lines(buf, 0, -1, true, {"Once LSP is done loading & indexing, ", "remember to turn on type hints!", "<leader>th"})
 
