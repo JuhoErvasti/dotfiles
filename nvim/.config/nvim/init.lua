@@ -1072,6 +1072,9 @@ vim.api.nvim_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<C
 -- <C-s> save
 vim.api.nvim_set_keymap('n', '<C-s>', ':w<CR>', { noremap=true, silent=true })
 
+-- format arguments
+vim.api.nvim_set_keymap('n', '<leader>a', ':<c-u>ArgonautToggle<cr>', {noremap = true, silent = true})
+
 local remind_of_typehints = function()
       if vim.lsp.inlay_hint.is_enabled() then
           return
