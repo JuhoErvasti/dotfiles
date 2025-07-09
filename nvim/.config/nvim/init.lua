@@ -1083,7 +1083,7 @@ local remind_of_typehints = function()
       -- check if buffer is in the /tmp/ folder, i.e. in 99.9% of cases nvimdiff is being used -> skip reminding
       for _, b in ipairs(vim.api.nvim_list_bufs()) do
           local path = vim.api.nvim_buf_get_name(b)
-          if string.sub(path, 1, 5) == "/tmp/" then
+          if string.sub(path, 1, 5) == "/tmp/" or string.sub(path, 1, 9) == "/dev/null" then
             return
           end
       end
