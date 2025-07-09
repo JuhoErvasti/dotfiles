@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Gnome Control Center
+Exec=env XDG_CURRENT_DESKTOP=gnome gnome-control-center
+Type=Application
+Terminal=false
+X-Desktop-File-Install-Version=0.26
