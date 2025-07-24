@@ -1074,3 +1074,17 @@ vim.api.nvim_set_keymap('n', '<C-s>', ':w<CR>', { noremap=true, silent=true })
 
 -- format arguments
 vim.api.nvim_set_keymap('n', '<leader>a', ':<c-u>ArgonautToggle<cr>', {noremap = true, silent = true})
+
+-- wrap selection in symbols
+vim.api.nvim_set_keymap('v', '"', 'c""<Esc>P', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', "'", "c''<Esc>P", { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '(', 'c()<Esc>P', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', ')', 'c()<Esc>P', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '[', 'c[]<Esc>P', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '{', 'c{}<Esc>P', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '}', 'c{}<Esc>P', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '<', 'c<><Esc>P', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '>', 'c<><Esc>P', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '_', 'c__<Esc>P', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '~', 'c~~<Esc>P', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '|', 'c||<Esc>P', { noremap = true, silent = true })
