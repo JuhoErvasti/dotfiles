@@ -1083,8 +1083,7 @@ vim.api.nvim_set_keymap('v', ')', 'c()<Esc>P', { noremap = true, silent = true }
 vim.api.nvim_set_keymap('v', '[', 'c[]<Esc>P', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '{', 'c{}<Esc>P', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '}', 'c{}<Esc>P', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', '<', 'c<><Esc>P', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', '>', 'c<><Esc>P', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '/', 'c<><Esc>P', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '_', 'c__<Esc>P', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '~', 'c~~<Esc>P', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '|', 'c||<Esc>P', { noremap = true, silent = true })
@@ -1098,5 +1097,5 @@ vim.api.nvim_set_keymap('n', '<C-A-l>', 'viwxp`[v`]', { noremap = true, silent =
 vim.api.nvim_set_keymap('n', '<C-A-h>', 'viwxhhp`[v`]', { noremap = true, silent = true })
 
 -- horizontal movement of a single symbol
-vim.api.nvim_set_keymap('n', '<C-S-l>', 'xp', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<C-S-h>', 'xhhp', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<A-l>', 'xp', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<A-h>', 'xhhp', { noremap = true, silent = true })
