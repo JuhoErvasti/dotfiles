@@ -1098,5 +1098,5 @@ vim.api.nvim_set_keymap('n', '<C-A-l>', 'viwxp`[v`]', { noremap = true, silent =
 vim.api.nvim_set_keymap('n', '<C-A-h>', 'viwxhhp`[v`]', { noremap = true, silent = true })
 
 -- horizontal movement of a single symbol
-vim.api.nvim_set_keymap('n', '<C-l>', 'xp', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<C-h>', 'xhhp', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<C-S-l>', 'xp', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<C-S-h>', 'xhhp', { noremap = true, silent = true })
