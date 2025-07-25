@@ -105,3 +105,7 @@ function cl {
     echo 'Input copied to clipboard!'
   fi
 }
+
+function exit_tmux {
+  tmux kill-session
+}
