@@ -23,12 +23,6 @@ function _show_usage_general {
     echo -e "\t$(basename -- $0) <language> --help"
 }
 
-if [ "$TMUX" != "" ]; then
-    echo "ERROR: don't run this inside a tmux session"
-    _show_usage_general
-    exit 1
-fi
-
 function _universal_usage {
     if command -v _show_usage 2>&1 > /dev/null; then
         _show_usage
@@ -272,6 +266,12 @@ function _start_compiled {
         esac
         shift
     done
+
+    if [ "$TMUX" != "" ] && [ "$registering" == false ]; then
+        echo "ERROR: don't run this inside a tmux session"
+        _show_usage_general
+        exit 1
+    fi
 
     if [ "$list_only" == true ]; then
         if [ -d "$lang_config_dir" ]; then
@@ -601,6 +601,14 @@ function _start_python {
         esac
         shift
     done
+
+    if [ "$TMUX" != "" ] && [ "$registering" == false ]; then
+        echo "ERROR: don't run this inside a tmux session"
+        _show_usage_general
+        exit 1
+    fi
+
+
 
     if [ "$list_only" == true ]; then
         if [ -d "$lang_config_dir" ]; then
