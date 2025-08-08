@@ -1,15 +1,15 @@
 return {
   {
-    'xiyaowong/transparent.nvim',
+    "xiyaowong/transparent.nvim",
   },
 
   {
-    'christoomey/vim-tmux-navigator',
+    "christoomey/vim-tmux-navigator",
   },
   {
-    'https://git.sr.ht/~foosoft/argonaut.nvim',
+    "https://git.sr.ht/~foosoft/argonaut.nvim",
     config = function ()
-      require('argonaut').setup({
+      require("argonaut").setup({
           brace_last_indent = false,
           brace_last_wrap = true,
           brace_pad = false,
@@ -20,5 +20,14 @@ return {
           limit_rows = 64,
       })
     end
+  },
+  {
+    "tpope/vim-dadbod",
+  },
+  {
+    "kristijanhusak/vim-dadbod-completion",
+  },
+  {
+    "kristijanhusak/vim-dadbod-ui",
   },
 }
