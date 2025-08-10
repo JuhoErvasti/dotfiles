@@ -513,7 +513,7 @@ require('lazy').setup({
           map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
 
           -- Find references for the word under your cursor.
-          map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+          map('gR', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
 
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.
@@ -800,7 +800,10 @@ require('lazy').setup({
           -- Accept ([y]es) the completion.
           --  This will auto-import if your LSP supports it.
           --  This will expand snippets if the LSP sent a snippet.
-          ['<CR>'] = cmp.mapping.confirm {},
+          ['<CR>'] = cmp.mapping.confirm {
+            behavior = cmp.ConfirmBehavior.Replace,
+            select = true,
+          },
 
           -- If you prefer more traditional completion keymaps,
           -- you can uncomment the following lines
@@ -1094,7 +1097,6 @@ vim.api.nvim_set_keymap('v', '}', 'c{}<Esc>P', { noremap = true, silent = true }
 vim.api.nvim_set_keymap('v', '/', 'c<><Esc>P', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '_', 'c__<Esc>P', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '~', 'c~~<Esc>P', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', '|', 'c||<Esc>P', { noremap = true, silent = true })
 
 -- horizontal movement of selection
 vim.api.nvim_set_keymap('v', '<C-A-l>', 'xp`[v`]', { noremap = true, silent = true })
