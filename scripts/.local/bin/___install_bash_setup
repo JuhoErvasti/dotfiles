@@ -24,6 +24,16 @@ alias l='ls -CF'""",
     """if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi""",
+    "set -o ignoreeof",
+    """if [ -n "$VIRTUAL_ENV" ]; then
+    source $VIRTUAL_ENV/bin/activate
+fi
+""",
+)
+
+NONCONTAINER_ADDITIONS = (
+    "setxkbmap -option caps:escape",
+    "setxkbmap fi",
     r"""force_color_prompt=yes
 color_prompt=yes
 parse_git_branch() {
@@ -35,18 +45,21 @@ else
   PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w $(parse_git_branch)\$ '
 fi
 unset color_prompt force_color_prompt""",
-    "set -o ignoreeof",
-    """if [ -n "$VIRTUAL_ENV" ]; then
-    source $VIRTUAL_ENV/bin/activate
+)
+
+CONTAINER_ADDITIONS = (
+    r"""force_color_prompt=yes
+color_prompt=yes
+parse_git_branch() {
+  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(:\1)/'
+}
+if [ "$color_prompt" = yes ]; then
+  PS1='${debian_chroot:+($debian_chroot)}\[\e[01;32m\]\u\[\e[0m\]\[\e[93;40;1m\]@{{container}}\[\e[0m\]:\[\033[01;34m\]\w\[\033[01;31m\] $(parse_git_branch)\[\033[00m\]\$ '
+else
+  PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w $(parse_git_branch)\$ '
 fi
-""",
+unset color_prompt force_color_prompt""",
 )
-
-NONCONTAINER_ADDITIONS = (
-    "setxkbmap -option caps:escape",
-    "setxkbmap fi",
-)
-
 def main() -> None:
     if not BASHRC.exists():
         print(f"ERROR: {BASHRC} does not exist!")
@@ -80,6 +93,14 @@ def main() -> None:
 
         if not is_container:
             for addition in NONCONTAINER_ADDITIONS:
+                if addition not in bashrc_text:
+                    file.write(addition)
+                    file.write("\n\n")
+        else:
+            container_name = input("What container name do you want to be shown in the PS1? ")
+            for addition in CONTAINER_ADDITIONS:
+                if "{{container}}" in addition:
+                    addition = addition.replace("{{container}}", container_name)
                 if addition not in bashrc_text:
                     file.write(addition)
                     file.write("\n\n")
