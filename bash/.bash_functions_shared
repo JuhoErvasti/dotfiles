@@ -109,3 +109,44 @@ function cl {
 function exit_tmux {
   tmux kill-session
 }
+
+function gs {
+  git status $@
+}
+
+function python {
+  python3 $@
+}
+
+function gdiff {
+  git difftool -y $@
+}
+
+function gl {
+  git log $@
+}
+
+function ga {
+  git add $@
+}
+
+function gc {
+  git commit $@
+}
+
+function c {
+  clear
+}
+
+function h {
+  history
+}
+
+function arch {
+  distrobox-enter Arch
+}
+
+# this needs to be an alias because the script has to be sourced for the
+# directory change to actually persist
+alias sd="source ___fzf_dir_move"
+
