@@ -1,0 +1,13 @@
+#!/bin/bash
+
+path=$(fzf)
+
+if [[ -v $path ]]; then
+  if [ -d "${path}" ]; then
+    echo $path
+  else
+    path=$(dirname $path)
+  fi
+
+  cd $path
+fi
