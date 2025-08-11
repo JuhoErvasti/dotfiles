@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [[ "$(basename -- "$0")" == "___fzf_dir_move" ]]; then
+  echo "$(basename -- "$0") has to be sourced in order for the directory change to persist."
+    echo "Either run 'source $0' or use the 'sd' alias."
+    exit 1
+fi
+
 path=$(fzf)
 
 if [ -f "${path}" ]; then
