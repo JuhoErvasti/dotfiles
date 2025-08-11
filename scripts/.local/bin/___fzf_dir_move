@@ -2,12 +2,10 @@
 
 path=$(fzf)
 
-if [[ -v $path ]]; then
-  if [ -d "${path}" ]; then
-    echo $path
-  else
-    path=$(dirname $path)
-  fi
+if [ -f "${path}" ]; then
+  path=$(dirname "$path")
+fi
 
+if [ -d "${path}" ]; then
   cd $path
 fi
