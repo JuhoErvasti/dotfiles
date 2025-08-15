@@ -106,7 +106,7 @@ function cl {
   fi
 }
 
-function exit_tmux {
+function tmux_exit {
   tmux kill-session
 }
 
