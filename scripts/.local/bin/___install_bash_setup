@@ -29,6 +29,11 @@ fi""",
     source $VIRTUAL_ENV/bin/activate
 fi
 """,
+    """# disable CTRL + S
+if [[ -t 0 && $- = *i* ]]; then
+    stty -ixon
+fi
+""",
 )
 
 NONCONTAINER_ADDITIONS = (
