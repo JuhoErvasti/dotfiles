@@ -450,6 +450,7 @@ function _start_compiled {
     tmux send "$build_command"
     if [ "$split_build_pane" != "" ]; then
         tmux split-window -h
+        tmux send "cd $compile_dir; clear" ENTER
         tmux send "$split_build_pane"
     fi
 
