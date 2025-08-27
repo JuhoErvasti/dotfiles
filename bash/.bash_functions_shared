@@ -146,7 +146,14 @@ function arch {
   distrobox-enter Arch
 }
 
+function krusader {
+  if [ "$1" == "" ]; then
+    /usr/bin/krusader $(pwd)
+  else
+    /usr/bin/krusader $@
+  fi
+}
+
 # this needs to be an alias because the script has to be sourced for the
 # directory change to actually persist
 alias sd="source ___fzf_dir_move"
-
