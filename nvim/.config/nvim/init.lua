@@ -1095,7 +1095,6 @@ vim.api.nvim_set_keymap('v', '[', 'c[]<Esc>P', { noremap = true, silent = true }
 vim.api.nvim_set_keymap('v', '{', 'c{}<Esc>P', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '}', 'c{}<Esc>P', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '/', 'c<><Esc>P', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', '_', 'c__<Esc>P', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '~', 'c~~<Esc>P', { noremap = true, silent = true })
 
 -- horizontal movement of selection
