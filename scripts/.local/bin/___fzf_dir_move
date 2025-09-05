@@ -13,5 +13,5 @@ if [ -f "${path}" ]; then
 fi
 
 if [ -d "${path}" ]; then
-  cd $path
+  cd "$path"
 fi
