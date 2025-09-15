@@ -267,7 +267,7 @@ function _start_compiled {
         shift
     done
 
-    if [ "$TMUX" != "" ] && [ "$registering" == false ]; then
+    if [ "$TMUX" != "" ] && [ "$registering" == false ] && [ "$list_only" == false ]; then
         echo "ERROR: don't run this inside a tmux session"
         _show_usage_general
         exit 1
@@ -275,13 +275,9 @@ function _start_compiled {
 
     if [ "$list_only" == true ]; then
         if [ -d "$lang_config_dir" ]; then
-            for file in "$lang_config_dir/*"; do
-                filename=$(basename -- $file)
+            for file in $lang_config_dir/*; do
+                filename=$(basename "$file")
                 filename="${filename%.*}"
-
-                if [ "$filename" == "*" ]; then
-                    continue
-                fi
 
                 echo $filename
             done
@@ -603,7 +599,7 @@ function _start_python {
         shift
     done
 
-    if [ "$TMUX" != "" ] && [ "$registering" == false ]; then
+    if [ "$TMUX" != "" ] && [ "$registering" == false ] && [ "$list_only" == false ]; then
         echo "ERROR: don't run this inside a tmux session"
         _show_usage_general
         exit 1
@@ -613,14 +609,9 @@ function _start_python {
 
     if [ "$list_only" == true ]; then
         if [ -d "$lang_config_dir" ]; then
-            for file in "$lang_config_dir/*"; do
-                filename=$(basename -- $file)
+            for file in $lang_config_dir/*; do
+                filename=$(basename "$file")
                 filename="${filename%.*}"
-
-
-                if [ "$filename" == "*" ]; then
-                    continue
-                fi
 
                 echo $filename
             done
