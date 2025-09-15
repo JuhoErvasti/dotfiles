@@ -33,7 +33,7 @@ Rust is used to install some dependencies: [installation](https://www.rust-lang.
 These programs are used in the i3 config and should be able to be called. Test
 that each one can be found:
 
-xsecurelock ([installation](https://github.com/google/xsecurelock?tab=readme-ov-file#installation) `NOTE: use common-auth`, has its own [dependencies](https://github.com/google/xsecurelock?tab=readme-ov-file#requirements)) \
+xsecurelock (`apt install xsecurelock` or [manual installation](https://github.com/google/xsecurelock?tab=readme-ov-file#installation) `NOTE: use common-auth`, has its own [dependencies](https://github.com/google/xsecurelock?tab=readme-ov-file#requirements)) \
 xidlehook (has to be installed with Cargo (`cargo install xidlehook --bins`), has to be at `~/.cargo/bin/xidlehook`), has its own [dependencies](https://github.com/jD91mZM2/xidlehook)) \
 i3wsr (has to be installed with Cargo (`cargo install i3wsr`), has to be at `~/.cargo/bin/i3wsr`) \
 numlockx \
