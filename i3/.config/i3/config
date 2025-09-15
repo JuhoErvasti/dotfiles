@@ -34,7 +34,7 @@ font pango:Ubuntu 10
 exec --no-startup-id dex --autostart --environment i3
 
 # suspend automatically
-exec xss-lock -n -- xsecurelock
+exec_always --no-startup-id xss-lock -n -- xsecurelock
 exec_always --no-startup-id ~/.config/i3scripts/xidlehook.sh
 
 # NetworkManager is the most popular way to manage wireless networks on Linux,
