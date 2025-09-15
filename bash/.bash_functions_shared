@@ -147,6 +147,11 @@ function arch {
 }
 
 function krusader {
+  if [ ! -f /usr/bin/krusader ]; then
+    echo "Krusader not found at /usr/bin/krusader, you might want to install it."
+    return
+  fi
+
   if [ "$1" == "" ]; then
     /usr/bin/krusader $(pwd)
   else
