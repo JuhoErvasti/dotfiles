@@ -34,8 +34,8 @@ font pango:Ubuntu 10
 exec --no-startup-id dex --autostart --environment i3
 
 # suspend automatically
-exec xset s 300 5
 exec xss-lock -n /usr/lib/xsecurelock/dimmer -l -- xsecurelock
+exec_always --no-startup-id ~/.config/i3scripts/xidlehook.sh
 
 # NetworkManager is the most popular way to manage wireless networks on Linux,
 # and nm-applet is a desktop environment-independent system tray GUI for it.
