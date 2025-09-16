@@ -54,6 +54,7 @@ maim \
 nm-applet \
 dex \
 setxkbmap \
+mpv \
 brightnessctl (relevant if on a laptop)
 
 Ideally there would be a complete list of the package names as found in the
