@@ -1,0 +1,6 @@
+allow_images=true
+key_up=Ctrl-p
+key_down=Ctrl-n
+key_expand=Ctrl-l
+key_pgup=Ctrl-u
+key_pgdn=Ctrl-d

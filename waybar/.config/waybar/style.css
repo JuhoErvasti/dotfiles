@@ -1,0 +1,48 @@
+/* Everforest Dark Color Pallete */
+
+@define-color background #2c2c2c;
+@define-color foreground #F5F5F5;
+@define-color disabled #B2BEB5;
+@define-color ws-active #808080;
+@define-color urgent #f7768e;
+
+* {
+    font-family: "Ubuntu";
+    font-size: 12px;
+    min-height: 0px;
+}
+
+window#waybar {
+    background-color: alpha(@background, 0.8);
+    color: @foreground;
+}
+
+#workspaces button {
+    padding: 1px;
+    background-color: transparent;
+    color: @fg;
+    border-radius: 0px;
+}
+
+#workspaces button:hover {
+    background: alpha(@background, 0.5);
+}
+
+#workspaces button.active {
+    background-color: @ws-active;
+}
+
+#workspaces button.urgent {
+    background-color: @urgent;
+}
+
+#battery, #cpu, #memory, #pulseaudio, #network {
+    padding-right: 4px;
+    padding-left: 8px;
+    border-right: 1px solid @foreground;
+}
+
+#clock {
+    padding-left: 8px;
+    padding-right: 4px;
+}

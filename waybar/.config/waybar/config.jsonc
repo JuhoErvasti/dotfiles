@@ -1,0 +1,67 @@
+{
+  "layer": "top",
+  "height": 12,
+  "spacing": 0, // Gaps between modules (4px)
+  "modules-left": [
+      "hyprland/workspaces",
+  ],
+  "modules-center": [
+    "hyprland/window"
+  ],
+  "modules-right": [
+      "battery",
+      "cpu",
+      "memory",
+      "pulseaudio",
+      "network",
+      "clock"
+  ],
+  "hyprland/workspaces": {
+    "format": "{name}"
+  },
+  "clock": {
+    "format": "{:%Y-%m-%d %H:%M}",
+    "timezone": "Europe/Helsinki",
+    "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+    "on-click": "gnome-calendar"
+  },
+  "cpu": {
+    "format": "   {usage}%",
+    "tooltip": true,
+    "on-click": "gnome-system-monitor -p"
+  },
+  "memory": {
+    "format": "   {}%",
+    "tooltip": true
+  },
+  // "backlight": {
+  //     "format": "{percent}% {icon}",
+  //     "format-icons": ["", "", "", "", "", "", "", "", ""]
+  // },
+  "battery": {
+    "states": {
+      "good": 95,
+      "warning": 30,
+      "critical": 15
+    },
+    "format": "{capacity}% {icon}",
+    "format-full": "{capacity}% {icon}",
+    "format-charging": "{capacity}% ",
+    "format-plugged": "{capacity}% ",
+    "format-alt": "{time} {icon}",
+    "format-icons": ["", "", "", "", ""]
+  },
+  "network": {
+    "format-wifi": "   {essid}",
+    "format-disconnected": "Disconnected 󱛅",
+    "on-click": "XDG_CURRENT_DESKTOP=gnome gnome-control-center wifi"
+  },
+  "pulseaudio": {
+    "format": "{icon}   {volume}%",
+    "format-muted": "  0%",
+      "format-icons": {
+          "default": ["", "", ""]
+      },
+      "on-click": "XDG_CURRENT_DESKTOP=gnome gnome-control-center sound"
+  },
+}
