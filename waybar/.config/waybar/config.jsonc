@@ -20,7 +20,7 @@
     "format": "{name}"
   },
   "clock": {
-    "format": "{:%Y-%m-%d %H:%M}",
+    "format": "   {:%Y-%m-%d %H:%M}",
     "timezone": "Europe/Helsinki",
     "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
     "on-click": "gnome-calendar"
@@ -44,16 +44,12 @@
       "warning": 30,
       "critical": 15
     },
-    "format": "{capacity}% {icon}",
-    "format-full": "{capacity}% {icon}",
-    "format-charging": "{capacity}% ",
-    "format-plugged": "{capacity}% ",
-    "format-alt": "{time} {icon}",
+    "format": "{icon}   {capacity}%",
     "format-icons": ["", "", "", "", ""]
   },
   "network": {
     "format-wifi": "   {essid}",
-    "format-disconnected": "Disconnected 󱛅",
+    "format-disconnected": "󱛅   disconnected",
     "on-click": "XDG_CURRENT_DESKTOP=gnome gnome-control-center wifi"
   },
   "pulseaudio": {
