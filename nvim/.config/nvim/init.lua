@@ -1107,3 +1107,15 @@ vim.api.nvim_set_keymap('n', '<C-A-h>', 'viwxhhp`[v`]', { noremap = true, silent
 -- horizontal movement of a single symbol
 vim.api.nvim_set_keymap('n', '<A-l>', 'xp', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<A-h>', 'xhhp', { noremap = true, silent = true })
+
+
+require("lspconfig").nixd.setup({
+  cmd = { "nixd" },
+  settings = {
+    nixd = {
+      nixpkgs = {
+        expr = "import <nixpkgs> { }",
+      },
+    },
+  },
+})
