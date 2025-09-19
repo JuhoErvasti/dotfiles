@@ -17,7 +17,8 @@
       "clock"
   ],
   "hyprland/workspaces": {
-    "format": "{name}"
+    "format": "{name}",
+    "on-click": "activate"
   },
   "clock": {
     "format": "   {:%Y-%m-%d %H:%M}",
